@@ -22,43 +22,45 @@ const arrowLeft = document.querySelector('.arrow_left');
 const arrowRight = document.querySelector('.arrow_right');
 const dotsContainer = document.querySelector('.dots');
 
-
+// ** Variable ** //
 let currentSlideIndex = 0; // La slide initiale est la première du tableau "slides" //
 
-function updateDots() { // Fonction qui met a jour l'affichage des points en fonction du "dot" sélectionné
-
-  document.querySelectorAll('.dot').forEach(dot => dot.classList.remove('dot_selected'));   // Réinitialiser la classe 'dot_selected' pour tous les points // 
-
-  // Cherche si le "dot_selected" est ajouté à un "dot" précédent avec l'opérateur "?."  Puis le retire, pour le rajouter au "dot" actuel que j'ai sélectionné // 
-  document.querySelector('.dot_selected')?.classList.remove('dot_selected') || document.querySelectorAll('.dot')[currentSlideIndex]?.classList.add('dot_selected');
-
-  const currentSlide = slides[currentSlideIndex];   // Mettre à jour l'image et le texte associé au slide du tableau actuel //
-
-  document.querySelector('.banner-img').src = `./assets/images/slideshow/${currentSlide.image}`; // Je crée un chemin pour aller chercher l'image dans le dossier "slideshow" //
-
-  document.querySelector('#banner p').innerHTML = `${currentSlide.tagLine}`; // Mettre à jour le texte de la balise <p> //
+// ** Function ** //
+function updateSlide() {
+  const currentSlide = slides[currentSlideIndex]; // je crée une constant qui contient la slide actuelle //
+  document.querySelector('.banner-img').src = `./assets/images/slideshow/${currentSlide.image}`; // je change l'image a l'interieur de la balise img //
+  document.querySelector('#banner p').innerHTML = `${currentSlide.tagLine}`; // je change le texte a l'interieur de la balise p //
 }
 
-arrowLeft.addEventListener('click', () => { // Ajout  du clic sur la flèche gauche //
-
-  currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;   // Mettre à jour l'index de la slide en fonction de la slide précédente // 
-  updateDots();
-});
-
-arrowRight.addEventListener('click', () => { // Ajout du clic sur la flèche droite //
-  currentSlideIndex = (currentSlideIndex + 1) % slides.length;
-  updateDots();
-});
-
-
-// Création des "dots" en fonction du nombre de slides //
-slides.forEach((_, index) => {
-  const dot = document.createElement('div'); // Création d'un élément HTML "div" //
-  dot.classList.add('dot', index === 0 && 'dot_selected'); // Ajout de la classe "dot" à l'élément HTML "div" //
-  dotsContainer.appendChild(dot);  // J'ajoute "dot" dans mon dotsContainer //
-
-  dot.addEventListener('click', () => {   // Gestion du clic sur les dots //
-    currentSlideIndex = index; // Je met a jour l'index de la slide en fonction du dot cliqué //
-    updateDots();
+function updateDots() {
+  const dots = document.querySelectorAll('.dot'); // je crée une constante qui contient tous les dots //
+  dots.forEach((dot, index) => {  // je fais une boucle sur tous les dots //
+    dot.classList.remove('dot_selected'); // je retire la classe "dot_selected" sur tous les dots //
+    if (index === currentSlideIndex) { // si l'index du dot est égal a l'index de la slide actuelle //
+      dot.classList.add('dot_selected'); // j'ajoute la classe "dot_selected" sur le dot //
+    }
   });
+}
+
+// ** Event ** //
+arrowLeft.addEventListener('click', () => { // quand je clique sur la flèche de gauche //
+  currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length; // je change l'index de la slide actuelle vers la gauche le modulo permet de revenir a la dernière slide quand on est sur la première //
+  updateSlide(); // j'update la slide //
+  updateDots(); // j'update les dots //
 });
+
+arrowRight.addEventListener('click', () => { // quand je clique sur la flèche de droite //
+  currentSlideIndex = (currentSlideIndex + 1) % slides.length; // je change l'index de la slide actuelle vers la droite (slide suivante) //
+  updateSlide(); // j'update la slide //
+  updateDots();  // j'update les dots //
+});
+
+// ** Initialisation ** //
+slides.forEach((_, index) => { // je fais une boucle sur toutes les slides //
+  const dot = document.createElement('div'); // je crée un dot //
+  dot.classList.add('dot'); // je lui ajoute la classe "dot" //
+  if (index === 0) { // si l'index du dot est égal a l'index de la slide actuelle //
+    dot.classList.add('dot_selected'); // j'ajoute la classe "dot_selected" sur le dot //
+  }  
+  dotsContainer.appendChild(dot); // j'ajoute le dot dans le container des dots //
+}); 
